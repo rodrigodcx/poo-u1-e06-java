@@ -2,21 +2,88 @@ package com.example.project;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class TestCupomFiscal {
 
 	private String BREAK = System.lineSeparator();
+	
+	private String TEXTO_ESPERADO_LOJA_COMPLETA = "Loja 1" + BREAK +
+			"Log 1, 10 C1" + BREAK +
+			"Bai 1 - Mun 1 - E1" + BREAK +
+			"CEP:11111-111 Tel (11) 1111-1111" + BREAK +
+			"Obs 1" + BREAK +
+			"CNPJ: 11.111.111/1111-11" + BREAK +
+			"IE: 123456789" + BREAK;
+
+	private String TEXTO_ESPERADO_SEM_NUMERO = "Loja 1" + BREAK +
+			"Log 1, s/n C1" + BREAK +
+			"Bai 1 - Mun 1 - E1" + BREAK +
+			"CEP:11111-111 Tel (11) 1111-1111" + BREAK +
+			"Obs 1" + BREAK +
+			"CNPJ: 11.111.111/1111-11" + BREAK +
+			"IE: 123456789" + BREAK;
+
+	private String TEXTO_ESPERADO_SEM_COMPLEMENTO = "Loja 1" + BREAK +
+			"Log 1, 10" + BREAK +
+			"Bai 1 - Mun 1 - E1" + BREAK +
+			"CEP:11111-111 Tel (11) 1111-1111" + BREAK +
+			"Obs 1" + BREAK +
+			"CNPJ: 11.111.111/1111-11" + BREAK +
+			"IE: 123456789" + BREAK;
+
+	private String TEXTO_ESPERADO_SEM_BAIRRO = "Loja 1" + BREAK +
+			"Log 1, 10 C1" + BREAK +
+			"Mun 1 - E1" + BREAK +
+			"CEP:11111-111 Tel (11) 1111-1111" + BREAK +
+			"Obs 1" + BREAK +
+			"CNPJ: 11.111.111/1111-11" + BREAK +
+			"IE: 123456789" + BREAK;
+
+	private String TEXTO_ESPERADO_SEM_CEP = "Loja 1" + BREAK +
+			"Log 1, 10 C1" + BREAK +
+			"Bai 1 - Mun 1 - E1" + BREAK +
+			"Tel (11) 1111-1111" + BREAK +
+			"Obs 1" + BREAK +
+			"CNPJ: 11.111.111/1111-11" + BREAK +
+			"IE: 123456789" + BREAK;
+
+	private String TEXTO_ESPERADO_SEM_TELEFONE = "Loja 1" + BREAK +
+			"Log 1, 10 C1" + BREAK +
+			"Bai 1 - Mun 1 - E1" + BREAK +
+			"CEP:11111-111" + BREAK +
+			"Obs 1" + BREAK +
+			"CNPJ: 11.111.111/1111-11" + BREAK +
+			"IE: 123456789" + BREAK;
+
+	private String TEXTO_ESPERADO_SEM_OBSERVACAO = "Loja 1" + BREAK +
+			"Log 1, 10 C1" + BREAK +
+			"Bai 1 - Mun 1 - E1" + BREAK +
+			"CEP:11111-111 Tel (11) 1111-1111" + BREAK +
+			"" + BREAK +
+			"CNPJ: 11.111.111/1111-11" + BREAK +
+			"IE: 123456789" + BREAK;
+
+	@BeforeAll
+	public void setup() {
+		CupomFiscal.NOME_LOJA = "Loja 1";
+		CupomFiscal.LOGRADOURO = "Log 1";
+		CupomFiscal.NUMERO = 10;
+		CupomFiscal.COMPLEMENTO = "C1";
+		CupomFiscal.BAIRRO = "Bai 1";
+		CupomFiscal.MUNICIPIO = "Mun 1";
+		CupomFiscal.ESTADO = "E1";
+		CupomFiscal.CEP = "11111-111";
+		CupomFiscal.TELEFONE = "(11) 1111-1111";
+		CupomFiscal.OBSERVACAO = "Obs 1";
+		CupomFiscal.CNPJ = "11.111.111/1111-11";
+		CupomFiscal.INSCRICAO_ESTADUAL = "123456789";
+	}
 
 	@Test
 	public void lojaCompleta() {
-		rodarTestarRetorno("Arcos Dourados Com. de Alimentos LTDA" + BREAK + 
-				"Av. Projetada Leste, 500 EUC F32/33/34" + BREAK + 
-				"Br. Sta Genebra - Campinas - SP" + BREAK + 
-				"CEP:13080-395 Tel (19) 3756-7408" + BREAK + 
-				"Loja 1317 (PDP)" + BREAK + 
-				"CNPJ: 42.591.651/0797-34" + BREAK + 
-				"IE: 244.898.500.113" + BREAK);
+		rodarTestarRetorno(TEXTO_ESPERADO_LOJA_COMPLETA);
 	}
 
 	@Test
@@ -36,17 +103,24 @@ public class TestCupomFiscal {
 	@Test
 	public void numeroZero() {
 		CupomFiscal.NUMERO = 0;
-		rodarTestarRetorno("Arcos Dourados Com. de Alimentos LTDA" + BREAK +
-				"Av. Projetada Leste, s/n EUC F32/33/34" + BREAK +
-				"Br. Sta Genebra - Campinas - SP" + BREAK +
-				"CEP:13080-395 Tel (19) 3756-7408" + BREAK +
-				"Loja 1317 (PDP)" + BREAK +
-				"CNPJ: 42.591.651/0797-34" + BREAK +
-				"IE: 244.898.500.113" + BREAK);
-
+		rodarTestarRetorno(TEXTO_ESPERADO_SEM_NUMERO);
 		CupomFiscal.NUMERO = 500;
 	}
-	
+
+	@Test
+	public void complementoVazio() {
+		CupomFiscal.COMPLEMENTO = "";
+		rodarTestarRetorno(TEXTO_ESPERADO_SEM_COMPLEMENTO);
+		CupomFiscal.COMPLEMENTO = "C1";
+	}
+
+	@Test
+	public void bairroVazio() {
+		CupomFiscal.BAIRRO = "";
+		rodarTestarRetorno(TEXTO_ESPERADO_SEM_BAIRRO);
+		CupomFiscal.BAIRRO = "Bai 1";
+	}
+
 	@Test
 	public void municipioVazio() {
 		CupomFiscal.MUNICIPIO = "";
@@ -60,7 +134,28 @@ public class TestCupomFiscal {
 		verificarCampoObrigatorio("O campo estado do endereço é obrigatório");
 	    CupomFiscal.ESTADO = "SP";
 	}
-	
+
+	@Test
+	public void cepVazio() {
+		CupomFiscal.CEP = "";
+		rodarTestarRetorno(TEXTO_ESPERADO_SEM_CEP);
+	    CupomFiscal.CEP = "11111-111";
+	}
+
+	@Test
+	public void telefoneVazio() {
+		CupomFiscal.TELEFONE = "";
+		rodarTestarRetorno(TEXTO_ESPERADO_SEM_TELEFONE);
+	    CupomFiscal.TELEFONE = "(11) 1111-1111";
+	}
+
+	@Test
+	public void observacaoVazia() {
+		CupomFiscal.OBSERVACAO = "";
+		rodarTestarRetorno(TEXTO_ESPERADO_SEM_OBSERVACAO);
+	    CupomFiscal.OBSERVACAO = "Obs 1";
+	}
+
 	@Test
 	public void cnpjVazio() {
 		CupomFiscal.CNPJ = "";
